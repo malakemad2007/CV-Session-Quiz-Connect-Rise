@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV & Portfolio Mastery Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #4a90e2, #f5f7fa);
+      min-height: 100vh;
+      color: #2d3748;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
+      z-index: 0;
+    }
+    .quiz-container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .header {
+      background: linear-gradient(90deg, #4a90e2, #90caf9);
+      padding: 3.5rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(74, 144, 226, 0.3);
+      margin-bottom: 3rem;
+      text-align: center;
+      animation: fadeIn 1.2s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .header p {
+      font-size: 1.25rem;
+      color: #e3f2fd;
+      margin-top: 1rem;
+    }
+    .topic-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-left: 6px solid #ffca28;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      transition: all 0.4s ease;
+    }
+    .topic-header:hover {
+      transform: translateX(15px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    .topic-header i {
+      color: #ffca28;
+      font-size: 2.5rem;
+    }
+    .topic-header h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    .quiz-question {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 1.8rem;
+      border-radius: 15px;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease-in-out;
+    }
+    .quiz-question:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      transform: translateY(-5px);
+    }
+    .quiz-question h3 {
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+      color: #2d3748;
+    }
+    .quiz-option {
+      padding: 1rem 1.5rem;
+      margin: 0.8rem 0;
+      cursor: pointer;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      background-color: #edf2f7;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+    }
+    .quiz-option:hover {
+      background-color: #e2e8f0;
+      border-color: #cbd5e0;
+    }
+    .correct {
+      background-color: #c6f6d5;
+      border-color: #38a169;
+      animation: pulse 0.6s ease;
+      color: #22543d;
+    }
+    .incorrect {
+      background-color: #fed7d7;
+      border-color: #e53e3e;
+      animation: shake 0.5s ease;
+      color: #742a2a;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-6px); }
+      100% { transform: translateX(0); }
+    }
+    .feedback {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      background-color: #e2e8f0;
+      color: #2d3748;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    #results {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      animation: slideUp 1s ease-out;
+      text-align: center;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .score-item {
+      padding: 1rem 0;
+      font-size: 1.2rem;
+      color: #2d3748;
+      font-weight: 500;
+    }
+    .btn {
+      background: linear-gradient(90deg, #ffca28, #f6ad55);
+      color: #2d3748;
+      padding: 1rem 2.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.4s ease;
+    }
+    .btn:hover {
+      background: linear-gradient(90deg, #f6ad55, #ed8936);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255, 202, 40, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>CV & Portfolio Mastery Quiz</h1>
+    <p>Elevate your skills with 75 questions and expert feedback</p>
+  </div>
+
+  <div class="quiz-container">
+    <h2 class="text-3xl font-semibold text-center mb-6 text-[#2d3748]">Interactive Quiz: Master Your CV & Portfolio</h2>
+    <p class="mb-8 text-center text-[#4a5568] text-lg">Test your understanding across 5 topics with instant feedback and detailed analysis.</p>
+
+    <!-- Topic 1: Positioning vs Listing -->
+    <div class="topic-header">
+      <i class="fas fa-bullseye"></i>
+      <h2>Positioning vs Listing</h2>
+    </div>
+    <div id="topic-1" class="topic-questions">
+      <div class="quiz-question" data-question="1-1">
+        <h3>1. Which bullet is an example of positioning?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-1', 'b', this)">a) Member of Debate Club</div>
+        <div class="quiz-option" onclick="checkAnswer('1-1', 'b', this)">b) Led debate workshops, increasing team wins by 30%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-1', 'b', this)">c) Attended debate meetings</div>
+        <div id="feedback-1-1" class="feedback">Correct: Positioning highlights impact with measurable results.</div>
+      </div>
+      <div class="quiz-question" data-question="1-2">
+        <h3>2. What’s the goal of positioning?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">a) Showcase value</div>
+        <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">b) List duties</div>
+        <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">c) Fill space</div>
+        <div id="feedback-1-2" class="feedback">Correct: Positioning emphasizes your value.</div>
+      </div>
+      <div class="quiz-question" data-question="1-3">
+        <h3>3. Which is a listing example?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-3', 'c', this)">a) Boosted sales by 20%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-3', 'c', this)">b) Managed team projects</div>
+        <div class="quiz-option" onclick="checkAnswer('1-3', 'c', this)">c) Worked in sales</div>
+        <div id="feedback-1-3" class="feedback">Correct: Listing lacks impact details.</div>
+      </div>
+      <div class="quiz-question" data-question="1-4">
+        <h3>4. Why avoid listing?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">a) Takes more time</div>
+        <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">b) Lacks impact</div>
+        <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">c) Looks messy</div>
+        <div id="feedback-1-4" class="feedback">Correct: Listing doesn’t show results.</div>
+      </div>
+      <div class="quiz-question" data-question="1-5">
+        <h3>5. Rewrite: "Attended meetings."</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-5', 'a', this)">a) Facilitated meetings, improving decisions by 15%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-5', 'a', this)">b) Sat in meetings</div>
+        <div class="quiz-option" onclick="checkAnswer('1-5', 'a', this)">c) Joined team meetings</div>
+        <div id="feedback-1-5" class="feedback">Correct: Adds impact with results.</div>
+      </div>
+      <div class="quiz-question" data-question="1-6">
+        <h3>6. Which shows positioning?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-6', 'b', this)">a) Worked on projects</div>
+        <div class="quiz-option" onclick="checkAnswer('1-6', 'b', this)">b) Designed app, increasing user base by 50%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-6', 'b', this)">c) Helped with tasks</div>
+        <div id="feedback-1-6" class="feedback">Correct: Includes measurable outcome.</div>
+      </div>
+      <div class="quiz-question" data-question="1-7">
+        <h3>7. What’s a positioning benefit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">a) More text</div>
+        <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">b) Simpler to write</div>
+        <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">c) Highlights strengths</div>
+        <div id="feedback-1-7" class="feedback">Correct: Showcases your strengths.</div>
+      </div>
+      <div class="quiz-question" data-question="1-8">
+        <h3>8. Rewrite: "Managed team."</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-8', 'a', this)">a) Managed team, reducing errors by 25%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-8', 'a', this)">b) Led team meetings</div>
+        <div class="quiz-option" onclick="checkAnswer('1-8', 'a', this)">c) Oversaw staff</div>
+        <div id="feedback-1-8" class="feedback">Correct: Adds measurable impact.</div>
+      </div>
+      <div class="quiz-question" data-question="1-9">
+        <h3>9. Which is better for a CV?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-9', 'b', this)">a) Listed duties</div>
+        <div class="quiz-option" onclick="checkAnswer('1-9', 'b', this)">b) Positioned achievements</div>
+        <div class="quiz-option" onclick="checkAnswer('1-9', 'b', this)">c) Generic roles</div>
+        <div id="feedback-1-9" class="feedback">Correct: Achievements stand out more.</div>
+      </div>
+      <div class="quiz-question" data-question="1-10">
+        <h3>10. What’s a weak listing example?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">a) Increased sales by 10%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">b) Trained new hires</div>
+        <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">c) Did office work</div>
+        <div id="feedback-1-10" class="feedback">Correct: Lacks specific impact.</div>
+      </div>
+      <div class="quiz-question" data-question="1-11">
+        <h3>11. How to start a positioned bullet?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-11', 'a', this)">a) With a strong verb</div>
+        <div class="quiz-option" onclick="checkAnswer('1-11', 'a', this)">b) With a date</div>
+        <div class="quiz-option" onclick="checkAnswer('1-11', 'a', this)">c) With a title</div>
+        <div id="feedback-1-11" class="feedback">Correct: Strong verbs drive impact.</div>
+      </div>
+      <div class="quiz-question" data-question="1-12">
+        <h3>12. Rewrite: "Helped customers."</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-12', 'b', this)">a) Assisted customers</div>
+        <div class="quiz-option" onclick="checkAnswer('1-12', 'b', this)">b) Resolved 50+ customer queries daily</div>
+        <div class="quiz-option" onclick="checkAnswer('1-12', 'b', this)">c) Talked to clients</div>
+        <div id="feedback-1-12" class="feedback">Correct: Adds quantity and action.</div>
+      </div>
+      <div class="quiz-question" data-question="1-13">
+        <h3>13. Why use metrics in positioning?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-13', 'c', this)">a) To confuse recruiters</div>
+        <div class="quiz-option" onclick="checkAnswer('1-13', 'c', this)">b) To take space</div>
+        <div class="quiz-option" onclick="checkAnswer('1-13', 'c', this)">c) To quantify success</div>
+        <div id="feedback-1-13" class="feedback">Correct: Metrics prove success.</div>
+      </div>
+      <div class="quiz-question" data-question="1-14">
+        <h3>14. Which is positioned?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-14', 'a', this)">a) Improved website traffic by 40%</div>
+        <div class="quiz-option" onclick="checkAnswer('1-14', 'a', this)">b) Worked on website</div>
+        <div class="quiz-option" onclick="checkAnswer('1-14', 'a', this)">c) Updated content</div>
+        <div id="feedback-1-14" class="feedback">Correct: Includes a measurable result.</div>
+      </div>
+      <div class="quiz-question" data-question="1-15">
+        <h3>15. What’s a positioning pitfall?</h3>
+        <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">a) Using numbers</div>
+        <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">b) Overstating results</div>
+        <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">c) Adding details</div>
+        <div id="feedback-1-15" class="feedback">Correct: Overstating undermines credibility.</div>
+      </div>
+    </div>
+
+    <!-- Topic 2: Storytelling in CVs -->
+    <div class="topic-header">
+      <i class="fas fa-book-open"></i>
+      <h2>Storytelling in CVs</h2>
+    </div>
+    <div id="topic-2" class="topic-questions">
+      <div class="quiz-question" data-question="2-1">
+        <h3>1. How should you order CV sections?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-1', 'b', this)">a) Always start with Education</div>
+        <div class="quiz-option" onclick="checkAnswer('2-1', 'b', this)">b) By strength, to highlight assets</div>
+        <div class="quiz-option" onclick="checkAnswer('2-1', 'b', this)">c) Chronologically, oldest first</div>
+        <div id="feedback-2-1" class="feedback">Correct: Order by strength showcases best assets.</div>
+      </div>
+      <div class="quiz-question" data-question="2-2">
+        <h3>2. What’s a storytelling element?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">a) Long lists</div>
+        <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">b) Random facts</div>
+        <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">c) A career narrative</div>
+        <div id="feedback-2-2" class="feedback">Correct: A narrative ties your experience together.</div>
+      </div>
+      <div class="quiz-question" data-question="2-3">
+        <h3>3. Why use storytelling?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-3', 'a', this)">a) Engages the reader</div>
+        <div class="quiz-option" onclick="checkAnswer('2-3', 'a', this)">b) Fills space</div>
+        <div class="quiz-option" onclick="checkAnswer('2-3', 'a', this)">c) Confuses recruiters</div>
+        <div id="feedback-2-3" class="feedback">Correct: Engages and clarifies your journey.</div>
+      </div>
+      <div class="quiz-question" data-question="2-4">
+        <h3>4. Which section starts the story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-4', 'b', this)">a) Education</div>
+        <div class="quiz-option" onclick="checkAnswer('2-4', 'b', this)">b) Professional Summary</div>
+        <div class="quiz-option" onclick="checkAnswer('2-4', 'b', this)">c) Hobbies</div>
+        <div id="feedback-2-4" class="feedback">Correct: Summary sets the narrative tone.</div>
+      </div>
+      <div class="quiz-question" data-question="2-5">
+        <h3>5. How to link experiences?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-5', 'c', this)">a) List them randomly</div>
+        <div class="quiz-option" onclick="checkAnswer('2-5', 'c', this)">b) Use different fonts</div>
+        <div class="quiz-option" onclick="checkAnswer('2-5', 'c', this)">c) Show skill progression</div>
+        <div id="feedback-2-5" class="feedback">Correct: Progression builds a coherent story.</div>
+      </div>
+      <div class="quiz-question" data-question="2-6">
+        <h3>6. What avoids a disjointed CV?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-6', 'a', this)">a) Consistent theme</div>
+        <div class="quiz-option" onclick="checkAnswer('2-6', 'a', this)">b) Mixed formats</div>
+        <div class="quiz-option" onclick="checkAnswer('2-6', 'a', this)">c) Unrelated skills</div>
+        <div id="feedback-2-6" class="feedback">Correct: A theme unifies the CV.</div>
+      </div>
+      <div class="quiz-question" data-question="2-7">
+        <h3>7. Which is a storytelling pitfall?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-7', 'b', this)">a) Clear goals</div>
+        <div class="quiz-option" onclick="checkAnswer('2-7', 'b', this)">b) Unrelated jobs</div>
+        <div class="quiz-option" onclick="checkAnswer('2-7', 'b', this)">c) Focused summary</div>
+        <div id="feedback-2-7" class="feedback">Correct: Unrelated jobs disrupt the story.</div>
+      </div>
+      <div class="quiz-question" data-question="2-8">
+        <h3>8. How to end the story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-8', 'c', this)">a) With education</div>
+        <div class="quiz-option" onclick="checkAnswer('2-8', 'c', this)">b) With a list</div>
+        <div class="quiz-option" onclick="checkAnswer('2-8', 'c', this)">c) With future goals</div>
+        <div id="feedback-2-8" class="feedback">Correct: Goals provide a forward-looking close.</div>
+      </div>
+      <div class="quiz-question" data-question="2-9">
+        <h3>9. Which supports a story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-9', 'a', this)">a) Relevant achievements</div>
+        <div class="quiz-option" onclick="checkAnswer('2-9', 'a', this)">b) Random tasks</div>
+        <div class="quiz-option" onclick="checkAnswer('2-9', 'a', this)">c) Old jobs</div>
+        <div id="feedback-2-9" class="feedback">Correct: Achievements reinforce the narrative.</div>
+      </div>
+      <div class="quiz-question" data-question="2-10">
+        <h3>10. What’s a weak story element?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">a) Skill growth</div>
+        <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">b) Unexplained gaps</div>
+        <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">c) Career focus</div>
+        <div id="feedback-2-10" class="feedback">Correct: Gaps weaken the narrative.</div>
+      </div>
+      <div class="quiz-question" data-question="2-11">
+        <h3>11. How to highlight growth?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-11', 'c', this)">a) List old roles</div>
+        <div class="quiz-option" onclick="checkAnswer('2-11', 'c', this)">b) Use same skills</div>
+        <div class="quiz-option" onclick="checkAnswer('2-11', 'c', this)">c) Show skill evolution</div>
+        <div id="feedback-2-11" class="feedback">Correct: Evolution shows progress.</div>
+      </div>
+      <div class="quiz-question" data-question="2-12">
+        <h3>12. Which fits a story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">a) Thematic bullet points</div>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">b) Unrelated facts</div>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">c) Scattered skills</div>
+        <div id="feedback-2-12" class="feedback">Correct: Thematic points build a narrative.</div>
+      </div>
+<div class="quiz-question" data-question="2-12">
+        <h3>12. Which fits a story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">a) Thematic bullet points</div>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">b) Unrelated facts</div>
+        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">c) Scattered skills</div>
+        <div id="feedback-2-12" class="feedback">Correct: Thematic points build a narrative.</div>
+      </div>
+      <div class="quiz-question" data-question="2-13">
+        <h3>13. What connects past to present?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-13', 'b', this)">a) Random dates</div>
+        <div class="quiz-option" onclick="checkAnswer('2-13', 'b', this)">b) Skill development</div>
+        <div class="quiz-option" onclick="checkAnswer('2-13', 'b', this)">c) Unlinked jobs</div>
+        <div id="feedback-2-13" class="feedback">Correct: Skill development links your journey.</div>
+      </div>
+      <div class="quiz-question" data-question="2-14">
+        <h3>14. Why avoid repetition?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-14', 'c', this)">a) Takes more space</div>
+        <div class="quiz-option" onclick="checkAnswer('2-14', 'c', this)">b) Looks professional</div>
+        <div class="quiz-option" onclick="checkAnswer('2-14', 'c', this)">c) Dilutes the story</div>
+        <div id="feedback-2-14" class="feedback">Correct: Repetition weakens the narrative focus.</div>
+      </div>
+      <div class="quiz-question" data-question="2-15">
+        <h3>15. How to test your story?</h3>
+        <div class="quiz-option" onclick="checkAnswer('2-15', 'a', this)">a) Ask a friend to review</div>
+        <div class="quiz-option" onclick="checkAnswer('2-15', 'a', this)">b) Add more details</div>
+        <div class="quiz-option" onclick="checkAnswer('2-15', 'a', this)">c) Skip review</div>
+        <div id="feedback-2-15" class="feedback">Correct: Feedback ensures clarity.</div>
+      </div>
+    </div>
+
+    <!-- Topic 3: Writing Impact Bullets -->
+    <div class="topic-header">
+      <i class="fas fa-pen"></i>
+      <h2>Writing Impact Bullets</h2>
+    </div>
+    <div id="topic-3" class="topic-questions">
+      <div class="quiz-question" data-question="3-1">
+        <h3>1. What makes a bullet impactful?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-1', 'c', this)">a) Long sentences</div>
+        <div class="quiz-option" onclick="checkAnswer('3-1', 'c', this)">b) Generic terms</div>
+        <div class="quiz-option" onclick="checkAnswer('3-1', 'c', this)">c) Measurable results</div>
+        <div id="feedback-3-1" class="feedback">Correct: Results add impact.</div>
+      </div>
+      <div class="quiz-question" data-question="3-2">
+        <h3>2. Start bullets with what?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-2', 'b', this)">a) A noun</div>
+        <div class="quiz-option" onclick="checkAnswer('3-2', 'b', this)">b) A strong verb</div>
+        <div class="quiz-option" onclick="checkAnswer('3-2', 'b', this)">c) An adjective</div>
+        <div id="feedback-3-2" class="feedback">Correct: Verbs drive action.</div>
+      </div>
+      <div class="quiz-question" data-question="3-3">
+        <h3>3. Which is an impact bullet?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-3', 'a', this)">a) Increased sales by 15%</div>
+        <div class="quiz-option" onclick="checkAnswer('3-3', 'a', this)">b) Worked in sales</div>
+        <div class="quiz-option" onclick="checkAnswer('3-3', 'a', this)">c) Helped with sales</div>
+        <div id="feedback-3-3" class="feedback">Correct: Includes a measurable outcome.</div>
+      </div>
+      <div class="quiz-question" data-question="3-4">
+        <h3>4. Avoid which in bullets?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-4', 'b', this)">a) Action words</div>
+        <div class="quiz-option" onclick="checkAnswer('3-4', 'b', this)">b) Vague phrases</div>
+        <div class="quiz-option" onclick="checkAnswer('3-4', 'b', this)">c) Numbers</div>
+        <div id="feedback-3-4" class="feedback">Correct: Vague phrases weaken impact.</div>
+      </div>
+      <div class="quiz-question" data-question="3-5">
+        <h3>5. Rewrite: "Managed projects."</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-5', 'c', this)">a) Oversaw projects</div>
+        <div class="quiz-option" onclick="checkAnswer('3-5', 'c', this)">b) Worked on projects</div>
+        <div class="quiz-option" onclick="checkAnswer('3-5', 'c', this)">c) Delivered 5 projects, saving 10% on costs</div>
+        <div id="feedback-3-5" class="feedback">Correct: Adds specific results.</div>
+      </div>
+      <div class="quiz-question" data-question="3-6">
+        <h3>6. What adds credibility?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-6', 'a', this)">a) Quantifiable data</div>
+        <div class="quiz-option" onclick="checkAnswer('3-6', 'a', this)">b) General statements</div>
+        <div class="quiz-option" onclick="checkAnswer('3-6', 'a', this)">c) Long descriptions</div>
+        <div id="feedback-3-6" class="feedback">Correct: Data supports claims.</div>
+      </div>
+      <div class="quiz-question" data-question="3-7">
+        <h3>7. Which is weak?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-7', 'b', this)">a) Reduced downtime by 20%</div>
+        <div class="quiz-option" onclick="checkAnswer('3-7', 'b', this)">b) Did some work</div>
+        <div class="quiz-option" onclick="checkAnswer('3-7', 'b', this)">c) Trained 10 staff</div>
+        <div id="feedback-3-7" class="feedback">Correct: Vague terms weaken bullets.</div>
+      </div>
+      <div class="quiz-question" data-question="3-8">
+        <h3>8. How long should a bullet be?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-8', 'a', this)">a) 1-2 lines</div>
+        <div class="quiz-option" onclick="checkAnswer('3-8', 'a', this)">b) 5-6 lines</div>
+        <div class="quiz-option" onclick="checkAnswer('3-8', 'a', this)">c) Full paragraph</div>
+        <div id="feedback-3-8" class="feedback">Correct: Short bullets are concise and impactful.</div>
+      </div>
+      <div class="quiz-question" data-question="3-9">
+        <h3>9. Which verb is strong?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-9', 'c', this)">a) Did</div>
+        <div class="quiz-option" onclick="checkAnswer('3-9', 'c', this)">b) Was</div>
+        <div class="quiz-option" onclick="checkAnswer('3-9', 'c', this)">c) Developed</div>
+        <div id="feedback-3-9" class="feedback">Correct: Strong verbs like "developed" show action.</div>
+      </div>
+      <div class="quiz-question" data-question="3-10">
+        <h3>10. What enhances a bullet?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-10', 'b', this)">a) Extra words</div>
+        <div class="quiz-option" onclick="checkAnswer('3-10', 'b', this)">b) Specific metrics</div>
+        <div class="quiz-option" onclick="checkAnswer('3-10', 'b', this)">c) General comments</div>
+        <div id="feedback-3-10" class="feedback">Correct: Metrics provide clarity.</div>
+      </div>
+      <div class="quiz-question" data-question="3-11">
+        <h3>11. Rewrite: "Handled calls."</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-11', 'a', this)">a) Managed 100+ calls daily, boosting satisfaction</div>
+        <div class="quiz-option" onclick="checkAnswer('3-11', 'a', this)">b) Answered calls</div>
+        <div class="quiz-option" onclick="checkAnswer('3-11', 'a', this)">c) Took phone calls</div>
+        <div id="feedback-3-11" class="feedback">Correct: Adds impact with quantity and result.</div>
+      </div>
+      <div class="quiz-question" data-question="3-12">
+        <h3>12. Why use action verbs?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-12', 'c', this)">a) Fill space</div>
+        <div class="quiz-option" onclick="checkAnswer('3-12', 'c', this)">b) Look fancy</div>
+        <div class="quiz-option" onclick="checkAnswer('3-12', 'c', this)">c) Show initiative</div>
+        <div id="feedback-3-12" class="feedback">Correct: Action verbs demonstrate proactivity.</div>
+      </div>
+      <div class="quiz-question" data-question="3-13">
+        <h3>13. Which is impactful?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-13', 'b', this)">a) Worked hard</div>
+        <div class="quiz-option" onclick="checkAnswer('3-13', 'b', this)">b) Cut costs by 15%</div>
+        <div class="quiz-option" onclick="checkAnswer('3-13', 'b', this)">c) Did tasks</div>
+        <div id="feedback-3-13" class="feedback">Correct: Specific results enhance impact.</div>
+      </div>
+      <div class="quiz-question" data-question="3-14">
+        <h3>14. Avoid what in bullets?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-14', 'a', this)">a) Jargon</div>
+        <div class="quiz-option" onclick="checkAnswer('3-14', 'a', this)">b) Numbers</div>
+        <div class="quiz-option" onclick="checkAnswer('3-14', 'a', this)">c) Verbs</div>
+        <div id="feedback-3-14" class="feedback">Correct: Jargon confuses readers.</div>
+      </div>
+      <div class="quiz-question" data-question="3-15">
+        <h3>15. What’s a bullet pitfall?</h3>
+        <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">a) Clear metrics</div>
+        <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">b) Strong verbs</div>
+        <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">c) Overloading details</div>
+        <div id="feedback-3-15" class="feedback">Correct: Too many details overwhelm.</div>
+      </div>
+    </div>
+
+    <!-- Topic 4: Selecting Skills & Hobbies Strategically -->
+    <div class="topic-header">
+      <i class="fas fa-tools"></i>
+      <h2>Selecting Skills & Hobbies Strategically</h2>
+    </div>
+    <div id="topic-4" class="topic-questions">
+      <div class="quiz-question" data-question="4-1">
+        <h3>1. Choose skills based on what?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-1', 'b', this)">a) Personal interest</div>
+        <div class="quiz-option" onclick="checkAnswer('4-1', 'b', this)">b) Job requirements</div>
+        <div class="quiz-option" onclick="checkAnswer('4-1', 'b', this)">c) Random choice</div>
+        <div id="feedback-4-1" class="feedback">Correct: Align skills with the job.</div>
+      </div>
+      <div class="quiz-question" data-question="4-2">
+        <h3>2. Which hobby is strategic?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-2', 'c', this)">a) Watching TV</div>
+        <div class="quiz-option" onclick="checkAnswer('4-2', 'c', this)">b) Sleeping</div>
+        <div class="quiz-option" onclick="checkAnswer('4-2', 'c', this)">c) Volunteering</div>
+        <div id="feedback-4-2" class="feedback">Correct: Volunteering shows leadership.</div>
+      </div>
+      <div class="quiz-question" data-question="4-3">
+        <h3>3. Avoid which skill?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-3', 'a', this)">a) Irrelevant skills</div>
+        <div class="quiz-option" onclick="checkAnswer('4-3', 'a', this)">b) Technical skills</div>
+        <div class="quiz-option" onclick="checkAnswer('4-3', 'a', this)">c) Soft skills</div>
+        <div id="feedback-4-3" class="feedback">Correct: Irrelevant skills waste space.</div>
+      </div>
+      <div class="quiz-question" data-question="4-4">
+        <h3>4. Which hobby shows teamwork?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-4', 'b', this)">a) Reading</div>
+        <div class="quiz-option" onclick="checkAnswer('4-4', 'b', this)">b) Team sports</div>
+        <div class="quiz-option" onclick="checkAnswer('4-4', 'b', this)">c) Gaming solo</div>
+        <div id="feedback-4-4" class="feedback">Correct: Team sports demonstrate collaboration.</div>
+      </div>
+      <div class="quiz-question" data-question="4-5">
+        <h3>5. How many skills to list?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-5', 'a', this)">a) 5-10 relevant ones</div>
+        <div class="quiz-option" onclick="checkAnswer('4-5', 'a', this)">b) 20+ skills</div>
+        <div class="quiz-option" onclick="checkAnswer('4-5', 'a', this)">c) 2-3 only</div>
+        <div id="feedback-4-5" class="feedback">Correct: 5-10 keeps it focused.</div>
+      </div>
+      <div class="quiz-question" data-question="4-6">
+        <h3>6. Which skill is job-specific?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-6', 'c', this)">a) Cooking</div>
+        <div class="quiz-option" onclick="checkAnswer('4-6', 'c', this)">b) Painting</div>
+        <div class="quiz-option" onclick="checkAnswer('4-6', 'c', this)">c) Data analysis</div>
+        <div id="feedback-4-6" class="feedback">Correct: Data analysis fits technical roles.</div>
+      </div>
+      <div class="quiz-question" data-question="4-7">
+        <h3>7. Why include hobbies?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-7', 'b', this)">a) Fill space</div>
+        <div class="quiz-option" onclick="checkAnswer('4-7', 'b', this)">b) Show personality</div>
+        <div class="quiz-option" onclick="checkAnswer('4-7', 'b', this)">c) Random fun</div>
+        <div id="feedback-4-7" class="feedback">Correct: Hobbies reveal character.</div>
+      </div>
+      <div class="quiz-question" data-question="4-8">
+        <h3>8. Avoid which hobby?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-8', 'a', this)">a) Excessive gaming</div>
+        <div class="quiz-option" onclick="checkAnswer('4-8', 'a', this)">b) Hiking</div>
+        <div class="quiz-option" onclick="checkAnswer('4-8', 'a', this)">c) Cooking</div>
+        <div id="feedback-4-8" class="feedback">Correct: Excessive gaming may seem unprofessional.</div>
+      </div>
+      <div class="quiz-question" data-question="4-9">
+        <h3>9. Which skill shows adaptability?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-9', 'c', this)">a) Basic math</div>
+        <div class="quiz-option" onclick="checkAnswer('4-9', 'c', this)">b) Typing</div>
+        <div class="quiz-option" onclick="checkAnswer('4-9', 'c', this)">c) Problem-solving</div>
+        <div id="feedback-4-9" class="feedback">Correct: Problem-solving shows flexibility.</div>
+      </div>
+      <div class="quiz-question" data-question="4-10">
+        <h3>10. How to present hobbies?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-10', 'b', this)">a) Long paragraphs</div>
+        <div class="quiz-option" onclick="checkAnswer('4-10', 'b', this)">b) Short bullet points</div>
+        <div class="quiz-option" onclick="checkAnswer('4-10', 'b', this)">c) Full stories</div>
+        <div id="feedback-4-10" class="feedback">Correct: Bullets keep it concise.</div>
+      </div>
+      <div class="quiz-question" data-question="4-11">
+        <h3>11. Which hobby fits a tech role?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-11', 'c', this)">a) Knitting</div>
+        <div class="quiz-option" onclick="checkAnswer('4-11', 'c', this)">b) Gardening</div>
+        <div class="quiz-option" onclick="checkAnswer('4-11', 'c', this)">c) Coding projects</div>
+        <div id="feedback-4-11" class="feedback">Correct: Coding aligns with tech skills.</div>
+      </div>
+      <div class="quiz-question" data-question="4-12">
+        <h3>12. Why prioritize skills?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-12', 'a', this)">a) Match job needs</div>
+        <div class="quiz-option" onclick="checkAnswer('4-12', 'a', this)">b) Impress with quantity</div>
+        <div class="quiz-option" onclick="checkAnswer('4-12', 'a', this)">c) Fill CV</div>
+        <div id="feedback-4-12" class="feedback">Correct: Relevant skills meet job demands.</div>
+      </div>
+      <div class="quiz-question" data-question="4-13">
+        <h3>13. Which hobby shows creativity?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-13', 'b', this)">a) Running</div>
+        <div class="quiz-option" onclick="checkAnswer('4-13', 'b', this)">b) Painting</div>
+        <div class="quiz-option" onclick="checkAnswer('4-13', 'b', this)">c) Walking</div>
+        <div id="feedback-4-13" class="feedback">Correct: Painting showcases creativity.</div>
+      </div>
+      <div class="quiz-question" data-question="4-14">
+        <h3>14. How to verify skills?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-14', 'c', this)">a) Guess them</div>
+        <div class="quiz-option" onclick="checkAnswer('4-14', 'c', this)">b) Ask friends</div>
+        <div class="quiz-option" onclick="checkAnswer('4-14', 'c', this)">c) Provide examples</div>
+        <div id="feedback-4-14" class="feedback">Correct: Examples prove skills.</div>
+      </div>
+      <div class="quiz-question" data-question="4-15">
+        <h3>15. What’s a hobby pitfall?</h3>
+        <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">a) Unrelated hobbies</div>
+        <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">b) Team activities</div>
+        <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">c) Creative pursuits</div>
+        <div id="feedback-4-15" class="feedback">Correct: Unrelated hobbies confuse recruiters.</div>
+      </div>
+    </div>
+
+    <!-- Topic 5: Expert Toolkit Checklist -->
+    <div class="topic-header">
+      <i class="fas fa-check"></i>
+      <h2>Expert Toolkit Checklist</h2>
+    </div>
+    <div id="topic-5" class="topic-questions">
+      <div class="quiz-question" data-question="5-1">
+        <h3>1. What’s in a CV toolkit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">a) Personal photos</div>
+        <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">b) Skill examples</div>
+        <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">c) Random notes</div>
+        <div id="feedback-5-1" class="feedback">Correct: Examples showcase expertise.</div>
+      </div>
+      <div class="quiz-question" data-question="5-2">
+        <h3>2. Why use a checklist?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-2', 'c', this)">a) Looks nice</div>
+        <div class="quiz-option" onclick="checkAnswer('5-2', 'c', this)">b) Fills space</div>
+        <div class="quiz-option" onclick="checkAnswer('5-2', 'c', this)">c) Ensures completeness</div>
+        <div id="feedback-5-2" class="feedback">Correct: Checklists ensure all key points are covered.</div>
+      </div>
+      <div class="quiz-question" data-question="5-3">
+        <h3>3. Which is a toolkit item?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-3', 'a', this)">a) Proofread CV</div>
+        <div class="quiz-option" onclick="checkAnswer('5-3', 'a', this)">b) Add colors</div>
+        <div class="quiz-option" onclick="checkAnswer('5-3', 'a', this)">c) Use big fonts</div>
+        <div id="feedback-5-3" class="feedback">Correct: Proofreading ensures quality.</div>
+      </div>
+      <div class="quiz-question" data-question="5-4">
+        <h3>4. Avoid what in a toolkit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-4', 'b', this)">a) Skill validation</div>
+        <div class="quiz-option" onclick="checkAnswer('5-4', 'b', this)">b) Unnecessary details</div>
+        <div class="quiz-option" onclick="checkAnswer('5-4', 'b', this)">c) Clear goals</div>
+        <div id="feedback-5-4" class="feedback">Correct: Unnecessary details clutter the toolkit.</div>
+      </div>
+      <div class="quiz-question" data-question="5-5">
+        <h3>5. What validates skills?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-5', 'c', this)">a) Opinions</div>
+        <div class="quiz-option" onclick="checkAnswer('5-5', 'c', this)">b) Guesses</div>
+        <div class="quiz-option" onclick="checkAnswer('5-5', 'c', this)">c) Certifications</div>
+        <div id="feedback-5-5" class="feedback">Correct: Certifications provide proof.</div>
+      </div>
+      <div class="quiz-question" data-question="5-6">
+        <h3>6. Which is a checklist step?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-6', 'a', this)">a) Review layout</div>
+        <div class="quiz-option" onclick="checkAnswer('5-6', 'a', this)">b) Add images</div>
+        <div class="quiz-option" onclick="checkAnswer('5-6', 'a', this)">c) Use bold text</div>
+        <div id="feedback-5-6" class="feedback">Correct: Layout review ensures readability.</div>
+      </div>
+      <div class="quiz-question" data-question="5-7">
+        <h3>7. Why tailor the toolkit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-7', 'b', this)">a) Looks different</div>
+        <div class="quiz-option" onclick="checkAnswer('5-7', 'b', this)">b) Matches job role</div>
+        <div class="quiz-option" onclick="checkAnswer('5-7', 'b', this)">c) Adds length</div>
+        <div id="feedback-5-7" class="feedback">Correct: Tailoring fits the job.</div>
+      </div>
+      <div class="quiz-question" data-question="5-8">
+        <h3>8. What’s a toolkit pitfall?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">a) Clear steps</div>
+        <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">b) Relevant tools</div>
+        <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">c) Overcomplication</div>
+        <div id="feedback-5-8" class="feedback">Correct: Overcomplication confuses the process.</div>
+      </div>
+      <div class="quiz-question" data-question="5-9">
+        <h3>9. Which tool checks grammar?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-9', 'a', this)">a) Grammarly</div>
+        <div class="quiz-option" onclick="checkAnswer('5-9', 'a', this)">b) Photoshop</div>
+        <div class="quiz-option" onclick="checkAnswer('5-9', 'a', this)">c) Excel</div>
+        <div id="feedback-5-9" class="feedback">Correct: Grammarly improves writing.</div>
+      </div>
+      <div class="quiz-question" data-question="5-10">
+        <h3>10. How to update the toolkit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-10', 'b', this)">a) Never change</div>
+        <div class="quiz-option" onclick="checkAnswer('5-10', 'b', this)">b) Add new skills</div>
+        <div class="quiz-option" onclick="checkAnswer('5-10', 'b', this)">c) Remove nothing</div>
+        <div id="feedback-5-10" class="feedback">Correct: Updating reflects growth.</div>
+      </div>
+      <div class="quiz-question" data-question="5-11">
+        <h3>11. What ensures consistency?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-11', 'c', this)">a) Different fonts</div>
+        <div class="quiz-option" onclick="checkAnswer('5-11', 'c', this)">b) Random order</div>
+        <div class="quiz-option" onclick="checkAnswer('5-11', 'c', this)">c) Template use</div>
+        <div id="feedback-5-11" class="feedback">Correct: Templates maintain uniformity.</div>
+      </div>
+      <div class="quiz-question" data-question="5-12">
+        <h3>12. Which is a final check?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-12', 'a', this)">a) Peer review</div>
+        <div class="quiz-option" onclick="checkAnswer('5-12', 'a', this)">b) Add more text</div>
+        <div class="quiz-option" onclick="checkAnswer('5-12', 'a', this)">c) Skip review</div>
+        <div id="feedback-5-12" class="feedback">Correct: Peer review catches errors.</div>
+      </div>
+      <div class="quiz-question" data-question="5-13">
+        <h3>13. Why use examples?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-13', 'b', this)">a) Fill pages</div>
+        <div class="quiz-option" onclick="checkAnswer('5-13', 'b', this)">b) Prove competence</div>
+        <div class="quiz-option" onclick="checkAnswer('5-13', 'b', this)">c) Look busy</div>
+        <div id="feedback-5-13" class="feedback">Correct: Examples demonstrate ability.</div>
+      </div>
+      <div class="quiz-question" data-question="5-14">
+        <h3>14. What’s a toolkit benefit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">a) More work</div>
+        <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">b) Confusion</div>
+        <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">c) Organized approach</div>
+        <div id="feedback-5-14" class
+        <div id="feedback-5-14" class="feedback">Correct: Organized approach improves efficiency.</div>
+      </div>
+      <div class="quiz-question" data-question="5-15">
+        <h3>15. How to simplify the toolkit?</h3>
+        <div class="quiz-option" onclick="checkAnswer('5-15', 'a', this)">a) Focus on essentials</div>
+        <div class="quiz-option" onclick="checkAnswer('5-15', 'a', this)">b) Add more steps</div>
+        <div class="quiz-option" onclick="checkAnswer('5-15', 'a', this)">c) Use complex terms</div>
+        <div id="feedback-5-15" class="feedback">Correct: Essentials keep it clear and effective.</div>
+      </div>
+    </div>
+
+    <div id="results" style="display: none;">
+      <h2 class="text-2xl font-bold mb-4">Quiz Results</h2>
+      <div class="score-item">Total Questions: <span id="totalQuestions">75</span></div>
+      <div class="score-item">Correct Answers: <span id="correctAnswers">0</span></div>
+      <div class="score-item">Score: <span id="scorePercentage">0%</span></div>
+      <canvas id="scoreChart" width="400" height="200"></canvas>
+      <a href="#" class="btn mt-6" onclick="resetQuiz()">Retry Quiz</a>
+    </div>
+  </div>
+
+  <script>
+    let score = 0;
+    const totalQuestions = 75;
+    const questions = {};
+
+    function checkAnswer(questionId, correctAnswer, element) {
+      const options = element.parentElement.getElementsByClassName('quiz-option');
+      const feedback = document.getElementById(`feedback-${questionId}`);
+      const isCorrect = element.textContent.trim().startsWith(correctAnswer);
+
+      for (let option of options) {
+        option.style.pointerEvents = 'none';
+        if (option.textContent.trim().startsWith(correctAnswer)) {
+          option.classList.add('correct');
+        } else if (option === element && !isCorrect) {
+          option.classList.add('incorrect');
+        }
+      }
+
+      feedback.style.display = 'block';
+      if (isCorrect) {
+        score++;
+        const jsConfetti = new JSConfetti();
+        jsConfetti.addConfetti();
+      }
+
+      questions[questionId] = isCorrect;
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const correctCount = Object.values(questions).filter(Boolean).length;
+      document.getElementById('correctAnswers').textContent = correctCount;
+      const percentage = ((correctCount / totalQuestions) * 100).toFixed(1);
+      document.getElementById('scorePercentage').textContent = `${percentage}%`;
+
+      if (correctCount === totalQuestions) {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.querySelectorAll('.topic-questions').forEach(topic => topic.style.display = 'none');
+      document.getElementById('results').style.display = 'block';
+
+      const ctx = document.getElementById('scoreChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Correct', 'Incorrect'],
+          datasets: [{
+            data: [score, totalQuestions - score],
+            backgroundColor: ['#48BB78', '#F56565']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    function resetQuiz() {
+      score = 0;
+      questions = {};
+      document.getElementById('correctAnswers').textContent = '0';
+      document.getElementById('scorePercentage').textContent = '0%';
+      document.querySelectorAll('.topic-questions').forEach(topic => topic.style.display = 'block');
+      document.getElementById('results').style.display = 'none';
+      document.querySelectorAll('.quiz-option').forEach(option => {
+        option.classList.remove('correct', 'incorrect');
+        option.style.pointerEvents = 'auto';
+      });
+      document.querySelectorAll('.feedback').forEach(feedback => feedback.style.display = 'none');
+      if (window.myChart) myChart.destroy();
+    }
+  </script>
+</body>
+</html>
+
