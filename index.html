@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-confetti@0.11.0/dist/js-confetti.browser.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -16,198 +16,560 @@
       box-sizing: border-box;
     }
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #4a90e2, #f5f7fa);
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       min-height: 100vh;
-      color: #2d3748;
+      color: #1e293b;
       overflow-x: hidden;
       position: relative;
-    }
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
-      z-index: 0;
+      display: flex;
+      flex-direction: column;
     }
     .quiz-container {
       max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2.5rem;
+      margin: 2rem auto;
+      padding: 2rem;
       position: relative;
       z-index: 1;
+      flex: 1;
     }
     .header {
-      background: linear-gradient(90deg, #4a90e2, #90caf9);
-      padding: 3.5rem 2.5rem;
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(74, 144, 226, 0.3);
-      margin-bottom: 3rem;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
+      margin-bottom: 2rem;
       text-align: center;
       animation: fadeIn 1.2s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-content {
+      position: relative;
+      z-index: 2;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
+      from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .header h1 {
-      font-size: 3.5rem;
+      font-size: 2.5rem;
       font-weight: 700;
       color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      margin-bottom: 0.5rem;
     }
     .header p {
-      font-size: 1.25rem;
-      color: #e3f2fd;
-      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: #e0e7ff;
+      margin-top: 0.5rem;
+    }
+    .session-info {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    .session-info p {
+      margin: 0.4rem 0;
+      font-size: 1rem;
+      color: #64748b;
+    }
+    .session-info .title {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
     }
     .topic-header {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      padding: 1.5rem 2rem;
-      background: rgba(255, 255, 255, 0.95);
-      border-left: 6px solid #ffca28;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-      transition: all 0.4s ease;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
+      background: #ffffff;
+      border-left: 4px solid #4f46e5;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
     .topic-header:hover {
-      transform: translateX(15px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
     }
     .topic-header i {
-      color: #ffca28;
-      font-size: 2.5rem;
+      color: #4f46e5;
+      font-size: 1.8rem;
+      z-index: 2;
     }
     .topic-header h2 {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      color: #2d3748;
+      color: #1e293b;
+      z-index: 2;
+    }
+    .topic-header .indicator {
+      margin-left: auto;
+      font-size: 1.2rem;
+      color: #64748b;
+      transition: transform 0.3s ease;
     }
     .quiz-question {
-      background: rgba(255, 255, 255, 0.98);
-      padding: 1.8rem;
-      border-radius: 15px;
-      margin-bottom: 1.8rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
       transition: all 0.3s ease-in-out;
+      position: relative;
+      overflow: hidden;
+    }
+    .quiz-question::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, #4f46e5, #7c3aed);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     .quiz-question:hover {
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      transform: translateY(-3px);
+    }
+    .quiz-question:hover::before {
+      opacity: 1;
     }
     .quiz-question h3 {
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 500;
       margin-bottom: 1.2rem;
-      color: #2d3748;
+      color: #1e293b;
     }
     .quiz-option {
-      padding: 1rem 1.5rem;
-      margin: 0.8rem 0;
+      padding: 0.8rem 1.2rem;
+      margin: 0.6rem 0;
       cursor: pointer;
       border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      background-color: #edf2f7;
+      border-radius: 8px;
+      background-color: #f8fafc;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      color: #1e293b;
+      position: relative;
+      overflow: hidden;
     }
     .quiz-option:hover {
-      background-color: #e2e8f0;
-      border-color: #cbd5e0;
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+      transform: translateX(4px);
     }
     .correct {
-      background-color: #c6f6d5;
-      border-color: #38a169;
+      background-color: #dcfce7;
+      border-color: #22c55e;
+      color: #166534;
       animation: pulse 0.6s ease;
-      color: #22543d;
     }
     .incorrect {
-      background-color: #fed7d7;
-      border-color: #e53e3e;
+      background-color: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
       animation: shake 0.5s ease;
-      color: #742a2a;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50% { transform: scale(1.02); }
       100% { transform: scale(1); }
     }
     @keyframes shake {
       0% { transform: translateX(0); }
-      25% { transform: translateX(-6px); }
-      50% { transform: translateX(6px); }
-      75% { transform: translateX(-6px); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-4px); }
       100% { transform: translateX(0); }
     }
     .feedback {
       display: none;
       margin-top: 1rem;
-      padding: 0.8rem 1rem;
+      padding: 0.8rem;
       border-radius: 8px;
-      background-color: #e2e8f0;
-      color: #2d3748;
-      font-size: 1rem;
+      background-color: #f3f4f6;
+      color: #475569;
+      font-size: 0.95rem;
       line-height: 1.5;
+      border-left: 3px solid #4f46e5;
     }
     #results {
-      background: rgba(255, 255, 255, 0.98);
-      padding: 3rem;
-      border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       animation: slideUp 1s ease-out;
       text-align: center;
+      border: 1px solid #e2e8f0;
     }
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .score-item {
-      padding: 1rem 0;
-      font-size: 1.2rem;
-      color: #2d3748;
+      padding: 0.8rem 0;
+      font-size: 1.1rem;
+      color: #1e293b;
       font-weight: 500;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .score-item:last-child {
+      border-bottom: none;
     }
     .btn {
-      background: linear-gradient(90deg, #ffca28, #f6ad55);
-      color: #2d3748;
-      padding: 1rem 2.5rem;
-      border-radius: 12px;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
       font-weight: 600;
       text-decoration: none;
       display: inline-block;
-      transition: all 0.4s ease;
+      transition: all 0.3s ease;
+      margin: 0.5rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
     .btn:hover {
-      background: linear-gradient(90deg, #f6ad55, #ed8936);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(255, 202, 40, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #1e293b;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #e2e8f0;
+      border-radius: 10px;
+      margin: 1.2rem 0;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    .topic-progress {
+      margin: 1.5rem 0;
+      padding: 1.2rem;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .topic-progress h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topic-progress h3 span {
+      font-size: 1rem;
+      color: #64748b;
+    }
+    .chart-container {
+      margin: 2rem auto;
+      max-width: 800px;
+      height: 300px;
+    }
+    .analysis-container {
+      margin: 2rem auto;
+      max-width: 800px;
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .social-icons a {
+      color: white;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .social-icons a:hover {
+      color: #4f46e5;
+      transform: translateY(-3px) scale(1.1);
+      background: rgba(79, 70, 229, 0.2);
+      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    }
+    .footer-info {
+      margin: 1rem 0;
+    }
+    .footer-info h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+    .footer-info p {
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    .copyright {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .topic-container {
+      display: none;
+    }
+    .topic-container.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    .topic-nav {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .mastery-feedback {
+      text-align: left;
+      margin: 1.5rem 0;
+      padding: 1.2rem;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .mastery-feedback h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #4f46e5;
+    }
+    .mastery-feedback ul {
+      list-style-type: none;
+    }
+    .mastery-feedback li {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .mastery-feedback li:last-child {
+      border-bottom: none;
+    }
+    .mastery-feedback i {
+      margin-right: 0.8rem;
+      font-size: 1rem;
+    }
+    .strength i {
+      color: #22c55e;
+    }
+    .improvement i {
+      color: #ef4444;
+    }
+    .mastery-feedback .suggestion {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    .quiz-intro {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .quiz-intro h2 {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      color: #1e293b;
+    }
+    .quiz-intro p {
+      font-size: 1.1rem;
+      color: #64748b;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .completion-badge {
+      font-size: 3rem;
+      color: #4f46e5;
+      margin: 1.5rem 0;
+      animation: bounce 1s infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    .results-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .results-header h2 {
+      font-size: 2rem;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+    .results-header p {
+      color: #64748b;
+      font-size: 1.1rem;
+    }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .user-info {
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 2rem;
+    }
+    .user-info h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #1e293b;
+    }
+    .user-info label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+    .user-info input, .user-info textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #1e293b;
+      background: #f8fafc;
+      transition: all 0.3s ease;
+    }
+    .user-info input:focus, .user-info textarea:focus {
+      border-color: #4f46e5;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    .user-info textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .user-info .form-group {
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .header h1 {
+        font-size: 2rem;
+      }
+      .topic-header h2 {
+        font-size: 1.3rem;
+      }
+      .quiz-question h3 {
+        font-size: 1rem;
+      }
+      .btn {
+        padding: 0.6rem 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>CV & Portfolio Mastery Quiz</h1>
-    <p>Elevate your skills with 75 questions and expert feedback</p>
+    <div class="header-content">
+      <h1>CV & Portfolio Mastery Quiz</h1>
+      <p>Elevate your skills with 75 questions and expert feedback</p>
+    </div>
   </div>
-
   <div class="quiz-container">
-    <h2 class="text-3xl font-semibold text-center mb-6 text-[#2d3748]">Interactive Quiz: Master Your CV & Portfolio</h2>
-    <p class="mb-8 text-center text-[#4a5568] text-lg">Test your understanding across 5 topics with instant feedback and detailed analysis.</p>
-
+    <div class="session-info">
+      <p class="title">"CVs & Portfolios Like a Pro: What Admissions Officers, Recruiters, and Opportunity Gatekeepers Actually Look For"</p>
+      <p>Presented by <strong>Malak Emad</strong> | Hosted by <strong>Connect Rise</strong></p>
+    </div>
+    <div class="quiz-intro">
+      <h2>Interactive Quiz: Master Your CV & Portfolio</h2>
+      <p>Test your understanding across 5 topics with instant feedback and detailed analysis. Complete all questions to receive your personalized mastery report.</p>
+    </div>
+    <div class="user-info">
+      <h3>Enter Your Details</h3>
+      <div class="form-group">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" placeholder="Enter your name">
+      </div>
+      <div class="form-group">
+        <label for="team">Your Team Name:</label>
+        <input type="text" id="team" placeholder="Enter your team name">
+      </div>
+      <div class="form-group">
+        <label for="role">Your Role:</label>
+        <input type="text" id="role" placeholder="Enter your role">
+      </div>
+      <div class="form-group">
+        <label for="love">What do you love the most about your team:</label>
+        <textarea id="love" placeholder="Enter your response"></textarea>
+      </div>
+    </div>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress" id="overallProgress" style="width: 0%"></div>
+    </div>
+    <p class="text-center text-gray-600" id="progressText">0/75 questions answered</p>
+    
     <!-- Topic 1: Positioning vs Listing -->
-    <div class="topic-header">
+    <div class="topic-header" onclick="toggleTopic('topic-1')">
       <i class="fas fa-bullseye"></i>
       <h2>Positioning vs Listing</h2>
+      <div class="indicator" id="topic-1-indicator">▶</div>
     </div>
-    <div id="topic-1" class="topic-questions">
+    <div id="topic-1" class="topic-questions topic-container">
       <div class="quiz-question" data-question="1-1">
         <h3>1. Which bullet is an example of positioning?</h3>
         <div class="quiz-option" onclick="checkAnswer('1-1', 'b', this)">a) Member of Debate Club</div>
@@ -216,7 +578,7 @@
         <div id="feedback-1-1" class="feedback">Correct: Positioning highlights impact with measurable results.</div>
       </div>
       <div class="quiz-question" data-question="1-2">
-        <h3>2. What’s the goal of positioning?</h3>
+        <h3>2. What's the goal of positioning?</h3>
         <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">a) Showcase value</div>
         <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">b) List duties</div>
         <div class="quiz-option" onclick="checkAnswer('1-2', 'a', this)">c) Fill space</div>
@@ -234,7 +596,7 @@
         <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">a) Takes more time</div>
         <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">b) Lacks impact</div>
         <div class="quiz-option" onclick="checkAnswer('1-4', 'b', this)">c) Looks messy</div>
-        <div id="feedback-1-4" class="feedback">Correct: Listing doesn’t show results.</div>
+        <div id="feedback-1-4" class="feedback">Correct: Listing doesn't show results.</div>
       </div>
       <div class="quiz-question" data-question="1-5">
         <h3>5. Rewrite: "Attended meetings."</h3>
@@ -251,7 +613,7 @@
         <div id="feedback-1-6" class="feedback">Correct: Includes measurable outcome.</div>
       </div>
       <div class="quiz-question" data-question="1-7">
-        <h3>7. What’s a positioning benefit?</h3>
+        <h3>7. What's a positioning benefit?</h3>
         <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">a) More text</div>
         <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">b) Simpler to write</div>
         <div class="quiz-option" onclick="checkAnswer('1-7', 'c', this)">c) Highlights strengths</div>
@@ -272,7 +634,7 @@
         <div id="feedback-1-9" class="feedback">Correct: Achievements stand out more.</div>
       </div>
       <div class="quiz-question" data-question="1-10">
-        <h3>10. What’s a weak listing example?</h3>
+        <h3>10. What's a weak listing example?</h3>
         <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">a) Increased sales by 10%</div>
         <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">b) Trained new hires</div>
         <div class="quiz-option" onclick="checkAnswer('1-10', 'c', this)">c) Did office work</div>
@@ -307,20 +669,21 @@
         <div id="feedback-1-14" class="feedback">Correct: Includes a measurable result.</div>
       </div>
       <div class="quiz-question" data-question="1-15">
-        <h3>15. What’s a positioning pitfall?</h3>
+        <h3>15. What's a positioning pitfall?</h3>
         <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">a) Using numbers</div>
         <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">b) Overstating results</div>
         <div class="quiz-option" onclick="checkAnswer('1-15', 'b', this)">c) Adding details</div>
         <div id="feedback-1-15" class="feedback">Correct: Overstating undermines credibility.</div>
       </div>
     </div>
-
+    
     <!-- Topic 2: Storytelling in CVs -->
-    <div class="topic-header">
+    <div class="topic-header" onclick="toggleTopic('topic-2')">
       <i class="fas fa-book-open"></i>
       <h2>Storytelling in CVs</h2>
+      <div class="indicator" id="topic-2-indicator">▶</div>
     </div>
-    <div id="topic-2" class="topic-questions">
+    <div id="topic-2" class="topic-questions topic-container">
       <div class="quiz-question" data-question="2-1">
         <h3>1. How should you order CV sections?</h3>
         <div class="quiz-option" onclick="checkAnswer('2-1', 'b', this)">a) Always start with Education</div>
@@ -329,7 +692,7 @@
         <div id="feedback-2-1" class="feedback">Correct: Order by strength showcases best assets.</div>
       </div>
       <div class="quiz-question" data-question="2-2">
-        <h3>2. What’s a storytelling element?</h3>
+        <h3>2. What's a storytelling element?</h3>
         <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">a) Long lists</div>
         <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">b) Random facts</div>
         <div class="quiz-option" onclick="checkAnswer('2-2', 'c', this)">c) A career narrative</div>
@@ -385,7 +748,7 @@
         <div id="feedback-2-9" class="feedback">Correct: Achievements reinforce the narrative.</div>
       </div>
       <div class="quiz-question" data-question="2-10">
-        <h3>10. What’s a weak story element?</h3>
+        <h3>10. What's a weak story element?</h3>
         <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">a) Skill growth</div>
         <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">b) Unexplained gaps</div>
         <div class="quiz-option" onclick="checkAnswer('2-10', 'b', this)">c) Career focus</div>
@@ -399,13 +762,6 @@
         <div id="feedback-2-11" class="feedback">Correct: Evolution shows progress.</div>
       </div>
       <div class="quiz-question" data-question="2-12">
-        <h3>12. Which fits a story?</h3>
-        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">a) Thematic bullet points</div>
-        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">b) Unrelated facts</div>
-        <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">c) Scattered skills</div>
-        <div id="feedback-2-12" class="feedback">Correct: Thematic points build a narrative.</div>
-      </div>
-<div class="quiz-question" data-question="2-12">
         <h3>12. Which fits a story?</h3>
         <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">a) Thematic bullet points</div>
         <div class="quiz-option" onclick="checkAnswer('2-12', 'a', this)">b) Unrelated facts</div>
@@ -434,13 +790,14 @@
         <div id="feedback-2-15" class="feedback">Correct: Feedback ensures clarity.</div>
       </div>
     </div>
-
+    
     <!-- Topic 3: Writing Impact Bullets -->
-    <div class="topic-header">
+    <div class="topic-header" onclick="toggleTopic('topic-3')">
       <i class="fas fa-pen"></i>
       <h2>Writing Impact Bullets</h2>
+      <div class="indicator" id="topic-3-indicator">▶</div>
     </div>
-    <div id="topic-3" class="topic-questions">
+    <div id="topic-3" class="topic-questions topic-container">
       <div class="quiz-question" data-question="3-1">
         <h3>1. What makes a bullet impactful?</h3>
         <div class="quiz-option" onclick="checkAnswer('3-1', 'c', this)">a) Long sentences</div>
@@ -540,20 +897,21 @@
         <div id="feedback-3-14" class="feedback">Correct: Jargon confuses readers.</div>
       </div>
       <div class="quiz-question" data-question="3-15">
-        <h3>15. What’s a bullet pitfall?</h3>
+        <h3>15. What's a bullet pitfall?</h3>
         <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">a) Clear metrics</div>
         <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">b) Strong verbs</div>
         <div class="quiz-option" onclick="checkAnswer('3-15', 'c', this)">c) Overloading details</div>
         <div id="feedback-3-15" class="feedback">Correct: Too many details overwhelm.</div>
       </div>
     </div>
-
+    
     <!-- Topic 4: Selecting Skills & Hobbies Strategically -->
-    <div class="topic-header">
+    <div class="topic-header" onclick="toggleTopic('topic-4')">
       <i class="fas fa-tools"></i>
       <h2>Selecting Skills & Hobbies Strategically</h2>
+      <div class="indicator" id="topic-4-indicator">▶</div>
     </div>
-    <div id="topic-4" class="topic-questions">
+    <div id="topic-4" class="topic-questions topic-container">
       <div class="quiz-question" data-question="4-1">
         <h3>1. Choose skills based on what?</h3>
         <div class="quiz-option" onclick="checkAnswer('4-1', 'b', this)">a) Personal interest</div>
@@ -653,22 +1011,23 @@
         <div id="feedback-4-14" class="feedback">Correct: Examples prove skills.</div>
       </div>
       <div class="quiz-question" data-question="4-15">
-        <h3>15. What’s a hobby pitfall?</h3>
+        <h3>15. What's a hobby pitfall?</h3>
         <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">a) Unrelated hobbies</div>
         <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">b) Team activities</div>
         <div class="quiz-option" onclick="checkAnswer('4-15', 'a', this)">c) Creative pursuits</div>
         <div id="feedback-4-15" class="feedback">Correct: Unrelated hobbies confuse recruiters.</div>
       </div>
     </div>
-
+    
     <!-- Topic 5: Expert Toolkit Checklist -->
-    <div class="topic-header">
+    <div class="topic-header" onclick="toggleTopic('topic-5')">
       <i class="fas fa-check"></i>
       <h2>Expert Toolkit Checklist</h2>
+      <div class="indicator" id="topic-5-indicator">▶</div>
     </div>
-    <div id="topic-5" class="topic-questions">
+    <div id="topic-5" class="topic-questions topic-container">
       <div class="quiz-question" data-question="5-1">
-        <h3>1. What’s in a CV toolkit?</h3>
+        <h3>1. What's in a CV toolkit?</h3>
         <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">a) Personal photos</div>
         <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">b) Skill examples</div>
         <div class="quiz-option" onclick="checkAnswer('5-1', 'b', this)">c) Random notes</div>
@@ -717,7 +1076,7 @@
         <div id="feedback-5-7" class="feedback">Correct: Tailoring fits the job.</div>
       </div>
       <div class="quiz-question" data-question="5-8">
-        <h3>8. What’s a toolkit pitfall?</h3>
+        <h3>8. What's a toolkit pitfall?</h3>
         <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">a) Clear steps</div>
         <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">b) Relevant tools</div>
         <div class="quiz-option" onclick="checkAnswer('5-8', 'c', this)">c) Overcomplication</div>
@@ -759,11 +1118,10 @@
         <div id="feedback-5-13" class="feedback">Correct: Examples demonstrate ability.</div>
       </div>
       <div class="quiz-question" data-question="5-14">
-        <h3>14. What’s a toolkit benefit?</h3>
+        <h3>14. What's a toolkit benefit?</h3>
         <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">a) More work</div>
         <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">b) Confusion</div>
         <div class="quiz-option" onclick="checkAnswer('5-14', 'c', this)">c) Organized approach</div>
-        <div id="feedback-5-14" class
         <div id="feedback-5-14" class="feedback">Correct: Organized approach improves efficiency.</div>
       </div>
       <div class="quiz-question" data-question="5-15">
@@ -774,27 +1132,104 @@
         <div id="feedback-5-15" class="feedback">Correct: Essentials keep it clear and effective.</div>
       </div>
     </div>
-
+    
+    <div class="topic-nav">
+      <button class="btn btn-secondary" onclick="navigateTopics('prev')">
+        <i class="fas fa-arrow-left"></i> Previous
+      </button>
+      <button class="btn btn-secondary" onclick="navigateTopics('next')">
+        Next <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+    
     <div id="results" style="display: none;">
-      <h2 class="text-2xl font-bold mb-4">Quiz Results</h2>
+      <div class="results-header">
+        <div class="completion-badge">
+          <i class="fas fa-award"></i>
+        </div>
+        <h2>Quiz Results</h2>
+        <p>Your personalized mastery report</p>
+      </div>
+      
       <div class="score-item">Total Questions: <span id="totalQuestions">75</span></div>
       <div class="score-item">Correct Answers: <span id="correctAnswers">0</span></div>
       <div class="score-item">Score: <span id="scorePercentage">0%</span></div>
-      <canvas id="scoreChart" width="400" height="200"></canvas>
-      <a href="#" class="btn mt-6" onclick="resetQuiz()">Retry Quiz</a>
+      
+      <div class="charts-grid">
+        <div class="chart-container">
+          <canvas id="scoreChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="analysis-container">
+        <div class="mastery-feedback">
+          <h3>Strengths & Areas for Improvement</h3>
+          <ul id="mastery-list">
+            <!-- Will be populated by JavaScript -->
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <a href="#" class="btn" onclick="resetQuiz()">
+          <i class="fas fa-redo"></i> Retry Quiz
+        </a>
+      </div>
     </div>
   </div>
-
+  
+  <footer>
+    <div class="footer-content">
+      <div class="footer-info">
+        <h3>Malak Emad</h3>
+        <p>STEM Enthusiast | Social Media Strategist | Community Leader</p>
+      </div>
+      <div class="social-icons">
+        <a href="mailto:malakemad7777777@gmail.com" aria-label="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://wa.me/201090879843" aria-label="WhatsApp" target="_blank">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://www.facebook.com/malak.emad.116431/" aria-label="Facebook" target="_blank">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/loka_luminary/" aria-label="Instagram" target="_blank">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://malakemad2007.github.io/My-portfolio/" aria-label="Portfolio" target="_blank">
+          <i class="fas fa-briefcase"></i>
+        </a>
+      </div>
+      <div class="copyright">
+        © 2025 Malak Emad. All rights reserved.
+      </div>
+    </div>
+  </footer>
+  
   <script>
     let score = 0;
     const totalQuestions = 75;
     const questions = {};
-
+    const topicScores = {
+      'topic-1': { correct: 0, total: 15, name: 'Positioning vs Listing' },
+      'topic-2': { correct: 0, total: 15, name: 'Storytelling in CVs' },
+      'topic-3': { correct: 0, total: 15, name: 'Writing Impact Bullets' },
+      'topic-4': { correct: 0, total: 15, name: 'Selecting Skills & Hobbies' },
+      'topic-5': { correct: 0, total: 15, name: 'Expert Toolkit Checklist' }
+    };
+    let currentTopic = 1;
+    let chartInstances = {};
+    
     function checkAnswer(questionId, correctAnswer, element) {
+      if (questions[questionId] !== undefined) return; // Already answered
       const options = element.parentElement.getElementsByClassName('quiz-option');
       const feedback = document.getElementById(`feedback-${questionId}`);
       const isCorrect = element.textContent.trim().startsWith(correctAnswer);
-
+      
       for (let option of options) {
         option.style.pointerEvents = 'none';
         if (option.textContent.trim().startsWith(correctAnswer)) {
@@ -803,65 +1238,283 @@
           option.classList.add('incorrect');
         }
       }
-
+      
       feedback.style.display = 'block';
+      
       if (isCorrect) {
         score++;
+        // Update topic score
+        const topicId = `topic-${questionId.split('-')[0]}`;
+        topicScores[topicId].correct++;
+        
+        // Add confetti for correct answers
         const jsConfetti = new JSConfetti();
-        jsConfetti.addConfetti();
+        jsConfetti.addConfetti({
+          confettiNumber: 200,
+          confettiRadius: 6
+        });
       }
-
+      
       questions[questionId] = isCorrect;
       updateProgress();
     }
-
+    
     function updateProgress() {
+      const answeredCount = Object.keys(questions).length;
+      const correctCount = Object.values(questions).filter(Boolean).length;
+      
+      // Update progress bar
+      const progressPercentage = (answeredCount / totalQuestions) * 100;
+      document.getElementById('overallProgress').style.width = `${progressPercentage}%`;
+      document.getElementById('progressText').textContent = `${answeredCount}/${totalQuestions} questions answered`;
+      
+      // Check if all questions are answered
+      if (answeredCount === totalQuestions) {
+        showResults();
+      }
+    }
+    
+    function showResults() {
+      document.querySelectorAll('.topic-container').forEach(topic => topic.style.display = 'none');
+      document.querySelector('.topic-nav').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      
       const correctCount = Object.values(questions).filter(Boolean).length;
       document.getElementById('correctAnswers').textContent = correctCount;
       const percentage = ((correctCount / totalQuestions) * 100).toFixed(1);
       document.getElementById('scorePercentage').textContent = `${percentage}%`;
-
-      if (correctCount === totalQuestions) {
-        showResults();
-      }
-    }
-
-    function showResults() {
-      document.querySelectorAll('.topic-questions').forEach(topic => topic.style.display = 'none');
-      document.getElementById('results').style.display = 'block';
-
-      const ctx = document.getElementById('scoreChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'doughnut',
+      
+      // Create bar chart for performance by topic
+      const ctx1 = document.getElementById('scoreChart').getContext('2d');
+      chartInstances.barChart = new Chart(ctx1, {
+        type: 'bar',
         data: {
-          labels: ['Correct', 'Incorrect'],
+          labels: Object.values(topicScores).map(topic => topic.name),
           datasets: [{
-            data: [score, totalQuestions - score],
-            backgroundColor: ['#48BB78', '#F56565']
+            label: 'Correct Answers',
+            data: Object.values(topicScores).map(topic => topic.correct),
+            backgroundColor: '#4f46e5',
+            borderColor: '#4338ca',
+            borderWidth: 1,
+            borderRadius: 6,
+            borderSkipped: false
           }]
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#4f46e5',
+              borderWidth: 1,
+              cornerRadius: 6
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 15,
+              ticks: {
+                color: '#64748b',
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#64748b',
+                font: {
+                  size: 11
+                }
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
         }
       });
+      
+      // Create doughnut chart for overall performance
+      const ctx2 = document.getElementById('performanceChart').getContext('2d');
+      chartInstances.doughnutChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Correct', 'Incorrect'],
+          datasets: [{
+            data: [correctCount, totalQuestions - correctCount],
+            backgroundColor: ['#4f46e5', '#f1f5f9'],
+            borderColor: ['#4f46e5', '#e2e8f0'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#1e293b',
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#4f46e5',
+              borderWidth: 1,
+              cornerRadius: 6
+            }
+          },
+          cutout: '70%',
+          radius: '90%'
+        }
+      });
+      
+      // Generate mastery feedback
+      generateMasteryFeedback();
     }
-
+    
+    function generateMasteryFeedback() {
+      const masteryList = document.getElementById('mastery-list');
+      masteryList.innerHTML = '';
+      
+      // Sort topics by performance
+      const sortedTopics = Object.entries(topicScores).sort((a, b) => b[1].correct - a[1].correct);
+      
+      sortedTopics.forEach(([topicId, topic]) => {
+        const percentage = (topic.correct / topic.total) * 100;
+        const li = document.createElement('li');
+        
+        let type, suggestion;
+        if (percentage >= 80) {
+          li.classList.add('strength');
+          type = 'Strength';
+          suggestion = 'Excellent performance. Continue leveraging this area in your professional development.';
+        } else if (percentage >= 60) {
+          li.classList.add('strength');
+          type = 'Developing Strength';
+          suggestion = 'Solid foundation. Focus on advanced applications to elevate to mastery level.';
+        } else {
+          li.classList.add('improvement');
+          type = 'Area for Improvement';
+          suggestion = 'Review key concepts and practice more examples to strengthen this area.';
+        }
+        
+        li.innerHTML = `<i class="fas fa-${percentage >= 60 ? 'check-circle' : 'exclamation-circle'}"></i> <strong>${type}:</strong> ${topic.name} (${percentage.toFixed(1)}%)<span class="suggestion">${suggestion}</span>`;
+        
+        masteryList.appendChild(li);
+      });
+    }
+    
     function resetQuiz() {
       score = 0;
-      questions = {};
+      for (const key in questions) {
+        delete questions[key];
+      }
+      for (let i = 1; i <= 5; i++) {
+        topicScores[`topic-${i}`].correct = 0;
+      }
+      
       document.getElementById('correctAnswers').textContent = '0';
       document.getElementById('scorePercentage').textContent = '0%';
-      document.querySelectorAll('.topic-questions').forEach(topic => topic.style.display = 'block');
+      
+      document.querySelectorAll('.topic-container').forEach(topic => topic.style.display = 'none');
+      document.querySelector('.topic-nav').style.display = 'flex';
       document.getElementById('results').style.display = 'none';
+      
       document.querySelectorAll('.quiz-option').forEach(option => {
         option.classList.remove('correct', 'incorrect');
         option.style.pointerEvents = 'auto';
       });
+      
       document.querySelectorAll('.feedback').forEach(feedback => feedback.style.display = 'none');
-      if (window.myChart) myChart.destroy();
+      
+      document.getElementById('overallProgress').style.width = '0%';
+      document.getElementById('progressText').textContent = '0/75 questions answered';
+      
+      // Destroy existing charts
+      if (chartInstances.barChart) {
+        chartInstances.barChart.destroy();
+      }
+      if (chartInstances.doughnutChart) {
+        chartInstances.doughnutChart.destroy();
+      }
+      
+      // Show first topic
+      currentTopic = 1;
+      document.getElementById(`topic-${currentTopic}`).classList.add('active');
+      document.getElementById(`topic-${currentTopic}-indicator`).textContent = '▼';
     }
+    
+    function toggleTopic(topicId) {
+      const topicElement = document.getElementById(topicId);
+      const indicator = document.getElementById(`${topicId}-indicator`);
+      
+      if (topicElement.classList.contains('active')) {
+        topicElement.classList.remove('active');
+        indicator.textContent = '▶';
+      } else {
+        // Hide all topics
+        document.querySelectorAll('.topic-container').forEach(topic => {
+          topic.classList.remove('active');
+        });
+        document.querySelectorAll('.topic-header .indicator').forEach(ind => {
+          ind.textContent = '▶';
+        });
+        
+        // Show selected topic
+        topicElement.classList.add('active');
+        indicator.textContent = '▼';
+        
+        // Update current topic
+        currentTopic = parseInt(topicId.split('-')[1]);
+      }
+    }
+    
+    function navigateTopics(direction) {
+      if (direction === 'next' && currentTopic < 5) {
+        currentTopic++;
+      } else if (direction === 'prev' && currentTopic > 1) {
+        currentTopic--;
+      }
+      
+      // Hide all topics
+      document.querySelectorAll('.topic-container').forEach(topic => {
+        topic.classList.remove('active');
+      });
+      document.querySelectorAll('.topic-header .indicator').forEach(ind => {
+        ind.textContent = '▶';
+      });
+      
+      // Show current topic
+      const currentTopicId = `topic-${currentTopic}`;
+      document.getElementById(currentTopicId).classList.add('active');
+      document.getElementById(`${currentTopicId}-indicator`).textContent = '▼';
+      
+      // Scroll to topic
+      document.getElementById(currentTopicId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // Initialize the first topic as open
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById(`topic-${currentTopic}`).classList.add('active');
+      document.getElementById(`topic-${currentTopic}-indicator`).textContent = '▼';
+    });
   </script>
 </body>
 </html>
-
